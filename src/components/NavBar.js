@@ -7,13 +7,11 @@ const NavBar = () => {
 
   return (
     <>
-      <nav className="navbar fixed-top navbar-expand-lg bg-black navbar-dark shadow-sm py-3">
+      <nav className="navbar fixed-top bg-black navbar-dark shadow-sm py-3">
         <div className="container">
           <NavLink className="navbar-brand fw-bold text-uppercase" to="/">News Monkey</NavLink>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+          <div className="navbar-nav ms-auto d-flex flex-wrap justify-content-end align-items-center">
+
             <ul className="navbar-nav">
               <li className="nav-item">
                 <NavLink className="nav-link nav-underline text-uppercase" to="/">general</NavLink>
