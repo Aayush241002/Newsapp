@@ -15,6 +15,7 @@ const News = (props) => {
   const [loading, setloading] = useState(false)
   const [page, setpage] = useState(1)
   const [totalResults, settotalResults] = useState(0)
+  const host = process.env.REACT_APP_API_BASE_URL;
 
   const capitalizeFirstLetter = (str) => {
     if (typeof str !== 'string' || str.length === 0) {
@@ -31,7 +32,7 @@ const News = (props) => {
   const pageloader = async () => {
     props.setprogress(50);
 
-    let url = `https://newsapi.org/v2/top-headlines?${props.country ? `country=${props.country}&` : ''}category=${props.category}&apiKey=${props.apikey}&pagesize=${props.pagesize}&page=${page}`
+    let url = `${host}/api/news?country=${props.country}&category=${props.category}&page=${page}&pageSize=${props.pagesize}`;
 
     setloading(true);
 
