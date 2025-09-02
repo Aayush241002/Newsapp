@@ -1,0 +1,4 @@
+/* Prevent layout shift by forcing scrollbar space */
+body {
+  overflow-y: scroll;
+}
