@@ -13,18 +13,13 @@ app.get('/api/news', async (req, res) => {
     const { category, page, pageSize } = req.query;
 
     const apiKey = process.env.NEWS_API_KEY;
-    const response = await axios.get('https://newsapi.org/v2/top-headlines', {
-      params: {
-        country: 'us',    // hardcoded here
-        category,
-        page,
-        pageSize,
-        apiKey,
-      },
-    });
+    const url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&page=${page}&pageSize=${pageSize}&apiKey=${apiKey}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
 
 
-    res.json(response.data);
+    res.json(data);
   } catch (err) {
     console.error('Error fetching news:', err);
     res.status(500).json({ error: 'Failed to fetch news' });
