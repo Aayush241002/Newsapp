@@ -1,131 +1,116 @@
 import React, { useEffect, useState } from 'react';
 
-import NewsItem from './NewsItem'
+import NewsItem from './NewsItem';
 import defaultImg from './news-default-big.png';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import Loading from './Loading';
-// import Mainloading from './Mainloading';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const News = (props) => {
-
-
-  const [articles, setarticles] = useState([])
-  const [loading, setloading] = useState(false)
-  const [page, setpage] = useState(1)
-  const [totalResults, settotalResults] = useState(0)
+  const [articles, setarticles] = useState([]);
+  const [loading, setloading] = useState(false);
+  const [page, setpage] = useState(1);
+  const [totalResults, settotalResults] = useState(0);
   const host = process.env.REACT_APP_API_BASE_URL;
 
   const capitalizeFirstLetter = (str) => {
     if (typeof str !== 'string' || str.length === 0) {
-      return str; // Handle non-string or empty input
+      return str;
     }
     return str.charAt(0).toUpperCase() + str.slice(1);
-  }
+  };
 
   useEffect(() => {
-    pageloader();
-  }, [])
+    pageloader(1); // Load first page on mount
+  }, [props.category, props.pagesize, props.country]);
 
-
-  const pageloader = async () => {
+  const pageloader = async (pageNumber = 1) => {
     props.setprogress(50);
 
-    let url = `${host}/api/news?country=${props.country}&category=${props.category}&page=${page}&pageSize=${props.pagesize}`;
+    let url = `${host}/api/news?category=${props.category}&page=${pageNumber}&pageSize=${props.pagesize}`;
+    if (props.country) {
+      url += `&country=${props.country}`;
+    }
 
     setloading(true);
 
-    let data = await fetch(url);
+    try {
+      let data = await fetch(url);
+      let parsedData = await data.json();
 
-    let parsedData = await data.json();
-    if (parsedData.status === "error") {
-      if (page !== 1) {
-        setpage(1);
-
-        pageloader(1);
+      if (parsedData.status === "error") {
+        if (pageNumber !== 1) {
+          setpage(1);
+          pageloader(1);
+        }
+        return;
       }
-      return;
+
+      setarticles(parsedData.articles);
+      settotalResults(parsedData.totalResults);
+      setpage(pageNumber);
+    } catch (error) {
+      console.error("Failed to load news:", error);
     }
-    setarticles(parsedData.articles);
-    settotalResults(parsedData.totalResults);
-    setpage(page);
+
     setloading(false);
     props.setprogress(100);
-
-  }
+  };
 
   const fetchMoreData = async () => {
-
     const nextPage = page + 1;
 
-    let url = `https://newsapi.org/v2/top-headlines?${props.country ? `country=${props.country}&` : ''}category=${props.category}&apiKey=${props.apikey}&pagesize=${props.pagesize}&page=${nextPage}`;
+    let url = `${host}/api/news?category=${props.category}&page=${nextPage}&pageSize=${props.pagesize}`;
+    if (props.country) {
+      url += `&country=${props.country}`;
+    }
 
     setloading(true);
 
-    let data = await fetch(url);
-    let parsedData = await data.json();
+    try {
+      let data = await fetch(url);
+      let parsedData = await data.json();
 
-    setarticles(articles.concat(parsedData.articles));
-    settotalResults(parsedData.totalResults);
-    setpage(nextPage);
+      setarticles(articles.concat(parsedData.articles));
+      settotalResults(parsedData.totalResults);
+      setpage(nextPage);
+    } catch (error) {
+      console.error("Failed to load more news:", error);
+    }
+
     setloading(false);
-
-  }
+  };
 
   const handlePrevious = async () => {
+    if (page > 1) {
+      await pageloader(page - 1);
+    }
+  };
 
-    setpage(page - 1);
-
-    pageloader()
-  }
   const handleNext = async () => {
-
-    setpage(page + 1);
-
-    pageloader()
-
-  }
+    if (page < Math.ceil(totalResults / props.pagesize)) {
+      await pageloader(page + 1);
+    }
+  };
 
   const handleFirst = async () => {
-    setpage(1);
-    pageloader();
-
-  }
+    await pageloader(1);
+  };
 
   const handleLast = async () => {
-    setpage(Math.ceil(totalResults / props.pagesize))
-
-    pageloader()
-
-  }
-  // if (state.loading) {
-  //   return (
-  //     <div className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
-  //       <Mainloading />
-  //     </div>
-  //   );
-  // }
+    await pageloader(Math.ceil(totalResults / props.pagesize));
+  };
 
   return (
     <div className="container" style={{ marginTop: "6rem", marginBottom: "1rem" }}>
       <h1 className='text-uppercase'>Top Headlines</h1>
 
-      {/* <div className="container d-flex justify-content-around mt-3">
-          <button type="button" className="btn btn-dark" onClick={handleFirst}>1</button>
-          <button type="button" disabled={state.page <= 1} className="btn btn-dark" onClick={handlePrevious}>&#8249;</button>
-          <button type="button" disabled={state.page >= Math.ceil(state.totalResults / props.pagesize)} className="btn btn-dark" onClick={handleNext}>&#8250;</button>
-          <button type="button" className="btn btn-dark" onClick={handleLast}>
-            {Math.ceil(state.totalResults / 15)}
-          </button>
-        </div>  */}
       <InfiniteScroll
         dataLength={articles.length}
         next={fetchMoreData}
         hasMore={articles.length !== totalResults}
-        loader={<div className="d-flex justify-content-center my-4">
-          <Loading />
-        </div>}
+        loader={<div className="d-flex justify-content-center my-4"><Loading /></div>}
       >
         <div className="container">
           <div className="row">
@@ -143,21 +128,24 @@ const News = (props) => {
             ))}
           </div>
         </div>
-
       </InfiniteScroll>
     </div>
   );
-}
+};
+
 News.propTypes = {
   category: PropTypes.string.isRequired,
   pagesize: PropTypes.number,
+  country: PropTypes.string,
+  apikey: PropTypes.string,
+  setprogress: PropTypes.func.isRequired,
 };
 
 News.defaultProps = {
   pagesize: 5,
   category: "general",
-  country: ""
-
+  country: "", // empty by default
+  apikey: "", // optional, if backend used, frontend key not needed
 };
 
-export default News
+export default News;
