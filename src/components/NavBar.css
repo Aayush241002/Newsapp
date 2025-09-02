@@ -1,44 +1,41 @@
-.navbar .nav-link {
-  font-size: clamp(11px, 2.2vw, 16px); /* ✅ scales text based on screen size */
-  color: white;
-  position: relative;
-  transition: all 0.3s ease;
-  padding: 0.5rem 1rem;
-  margin: 0 0.3rem;
-  white-space: nowrap;
-}
+  .navbar .nav-link {
+    color: white;
+    position: relative;
+    transition: all 0.3s ease;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+  }
 
-.navbar .nav-link.active::after {
-  width: 70%; /* underline stays when active */
-}
+  .navbar .nav-link.active::after {
+    width: 100%; /* underline stays when active */
+  }
 
-.navbar .nav-link.active {
-  color: #ffffff;
-  text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
-}
+  .navbar .nav-link.active {
+    color: #f5f3f3;
+    text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
+  }
 
-.navbar .nav-link::after {
-  content: "";
-  position: absolute;
-  height: 2px;
-  width: 0;
-  left: 50%;
-  bottom: 0;
-  background-color: white;
-  transform: translateX(-50%);
-  transition: width 0.4s ease;
-}
 
-.navbar .nav-link:hover::after {
-  width: 70%;
-}
+  .navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    background-color: #e62020;
+    transform: translateX(-50%);
+    transition: width 0.4s ease;
+  }
 
-.navbar .nav-link:hover {
-  color: #ffffff;
-  text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
-}
+  .navbar .nav-link:hover::after {
+    width: 100%;
+  }
 
-/* Dropdown styles */
+  .navbar .nav-link:hover {
+    color: #ffffff;
+    text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.7);
+  }
 .dropdown-item {
   font-size: 14px;
 }
@@ -47,38 +44,32 @@
   font-size: 18px; /* makes flag larger */
 }
 
+/* Dark dropdown to match navbar */
 .navbar .dropdown-menu {
-  background-color: #000;
+  background-color: #000; /* or same as your navbar */
   border: none;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 0.25rem;
-  padding: 0.5rem 0;
 }
 
+/* Style individual items */
 .navbar .dropdown-item {
   color: #fff;
   transition: background-color 0.3s, color 0.3s;
 }
 
+/* Hover effect */
 .navbar .dropdown-item:hover,
 .navbar .dropdown-item:focus {
-  background-color: #222;
+  background-color: #222; /* darker hover */
   color: #fff;
 }
 
+/* Optional: Active state */
 .navbar .dropdown-item.active {
   background-color: #444;
   color: #fff;
 }
-
-/* Responsive */
-@media (max-width: 600px) {
-  .navbar .nav-link {
-    font-size: 11px;
-    padding: 0.3rem 0.6rem;
-  }
-
-  .navbar-nav {
-    justify-content: center;
-  }
+.navbar .dropdown-menu {
+  border-radius: 0.25rem;
+  padding: 0.5rem 0;
 }
