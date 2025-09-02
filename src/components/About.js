@@ -3,7 +3,7 @@ import React from 'react'
 const About = () => {
 
     return (
-         <div className="about-container my-5" style={{margin:"100px"}}>
+         <div className="about-container my-5" style={{margin:"100px", paddingTop:"2rem"}}>
       <h2 className="about-title text-danger">About Us</h2>
       <p className="about-description my-3">
         <strong>NewsMonkey</strong> -- your go-to source for real-time news coverage and insightful reporting from around the world. We are an independent, web-based news platform built with React.js, designed to keep you informed and updated — anytime, anywhere.
